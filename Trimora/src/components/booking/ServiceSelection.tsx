@@ -43,7 +43,7 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({ salonId, onContinue
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/v1/employee-service/salon/${salonId}`, {
+      const response = await fetch(`https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/employee-service/salon/${salonId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

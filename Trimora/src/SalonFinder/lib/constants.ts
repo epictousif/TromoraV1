@@ -29,7 +29,7 @@ export const SALON_AMENITIES = ["AC", "Parking", "WiFi", "Coffee"] as const
 export const AVAILABILITY_OPTIONS = ["Available Now", "Busy"] as const
 
 // API base segments
-const API_BASE = process.env.NEXT_PUBLIC_API_URL_BASE || "http://localhost:5000/api/v1"
+const API_BASE = process.env.NEXT_PUBLIC_API_URL_BASE || "https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1"
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || `${API_BASE}/saloon`
 export const API_EMPLOYEE_URL = `${API_BASE}/employee`

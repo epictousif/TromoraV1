@@ -3,7 +3,7 @@ import type { AxiosInstance } from 'axios';
 import { tokenManager } from './api';
 
 // API Base URL for salon routes
-const SALON_API_BASE_URL = 'http://localhost:5000/api/v1/saloon/';
+const SALON_API_BASE_URL = 'https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/saloon/';
 
 // Create salon-specific axios instance
 const salonApi: AxiosInstance = axios.create({
@@ -41,7 +41,7 @@ salonApi.interceptors.response.use(
         // Try to refresh token
         const tokens = tokenManager.getTokens();
         if (tokens?.refreshToken) {
-          const refreshResponse = await axios.post('http://localhost:5000/api/v1/saloonUser/refresh', {
+          const refreshResponse = await axios.post('https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/saloonUser/refresh', {
             refreshToken: tokens.refreshToken
           });
 

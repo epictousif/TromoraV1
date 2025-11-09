@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function fetchMe() {
       if (!token) return
       try {
-        const res = await fetch("http://localhost:5000/api/v1/user/me", {
+        const res = await fetch("https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/user/me", {
           headers: { Authorization: `Bearer ${token}` },
           credentials: "include",
         })

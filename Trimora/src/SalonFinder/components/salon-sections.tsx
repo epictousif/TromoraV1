@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 // API service to fetch salons from backend
 const fetchSalonsFromAPI = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/v1/saloon/getAllSalons')
+    const response = await fetch('https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/saloon/getAllSalons')
     const data = await response.json()
     if (data.status === 'success') {
       return data.salons

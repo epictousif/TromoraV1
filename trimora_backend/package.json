@@ -7,10 +7,10 @@
     "setup-redis": "node scripts/setup-redis.js",
     "start": "nodemon server.js",
     "dev": "nodemon server.js",
-    "cache:status": "curl http://localhost:5000/api/v1/cache/status",
-    "cache:clear": "curl -X DELETE http://localhost:5000/api/v1/cache/clear",
-    "cache:warmup": "curl -X POST http://localhost:5000/api/v1/cache/warmup",
-    "cache:performance": "curl http://localhost:5000/api/v1/cache/performance"
+    "cache:status": "curl https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/status",
+    "cache:clear": "curl -X DELETE https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/clear",
+    "cache:warmup": "curl -X POST https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/warmup",
+    "cache:performance": "curl https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/performance"
   },
   "keywords": [],
   "author": "",

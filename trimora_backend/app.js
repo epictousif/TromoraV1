@@ -16,7 +16,7 @@ const app = express();
 
 // ✅ Use CORS before all routes
 app.use(cors({
-  origin:[ 'http://localhost:5173','http://localhost:5174'] ,// allow your frontend origin
+  origin:[ 'http://localhost:5173','http://localhost:5174','https://trimora.netlify.app'] ,// allow your frontend origin
   credentials: true               // allow cookies to be sent
 }));
 
