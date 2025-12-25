@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const validator = require("validator")
 const bcrypt = require("bcryptjs")
+const crypto = require("crypto")
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,7 +30,7 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: null,
       validate: {
-        validator: function(v) {
+        validator: function (v) {
           if (!v) return true;
           return /^[0-9]{10,15}$/.test(v);
         },
@@ -68,6 +69,14 @@ const userSchema = new mongoose.Schema(
       index: true,
     },
     passwordChangedAt: Date,
+    passwordResetOTP: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -126,7 +135,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 // Method to add a role to user
-userSchema.methods.addRole = function(role) {
+userSchema.methods.addRole = function (role) {
   if (!this.roles.includes(role)) {
     this.roles.push(role);
   }
@@ -134,7 +143,7 @@ userSchema.methods.addRole = function(role) {
 };
 
 // Method to check if user has a specific role
-userSchema.methods.hasRole = function(role) {
+userSchema.methods.hasRole = function (role) {
   return this.roles.includes(role);
 };
 
@@ -146,6 +155,21 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   }
   return false
 }
+
+// Generate password reset OTP
+userSchema.methods.createPasswordResetOTP = function () {
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Save OTP to database (no hashing needed for OTP)
+  this.passwordResetOTP = otp;
+
+  // Set expiry time (10 minutes)
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  // Return OTP to send via email
+  return otp;
+};
 
 const User = mongoose.model("User", userSchema)
 module.exports = User

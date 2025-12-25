@@ -3,7 +3,7 @@ import type { AxiosInstance } from 'axios';
 import { tokenManager } from './api';
 
 // API Base URL for employee service routes
-const EMPLOYEE_SERVICES_API_BASE_URL = 'https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/employee-service/';
+const EMPLOYEE_SERVICES_API_BASE_URL = 'https://tromora-v1.vercel.app/api/v1/employee-service/';
 
 const employeeServicesApi: AxiosInstance = axios.create({
   baseURL: EMPLOYEE_SERVICES_API_BASE_URL,
@@ -42,7 +42,7 @@ employeeServicesApi.interceptors.response.use(
       try {
         const tokens = tokenManager.getTokens();
         if (tokens?.refreshToken) {
-          const refreshResponse = await axios.post('https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/saloonUser/refresh', {
+          const refreshResponse = await axios.post('https://tromora-v1.vercel.app/api/v1/saloonUser/refresh', {
             refreshToken: tokens.refreshToken,
           });
           const newAccessToken = refreshResponse.data.accessToken;

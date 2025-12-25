@@ -14,6 +14,11 @@ router.post('/refresh', userController.refresh);
 router.get('/me', verifyAccess(['user', 'admin']), userController.me);
 router.post('/logout', verifyAccess(['user', 'admin']), userController.logout);
 
+// Password Reset (Public routes)
+router.post('/forgot-password', userController.forgotPassword);
+router.post('/reset-password', userController.resetPassword);
+
+
 // Role Management
 router.post('/:id/roles', verifyAccess(['admin']), userController.addRole);
 
@@ -25,3 +30,4 @@ router.put('/:id', verifyAccess(['admin', 'user']), userController.update);
 router.delete('/:id', verifyAccess(['admin']), userController.delete);
 
 module.exports = router;
+

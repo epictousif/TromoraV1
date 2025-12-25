@@ -31,7 +31,7 @@ export function HomePage() {
   const fetchHomeSalons = async () => {
     try {
       setLoading(true)
-      const response = await fetch('https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/home-salons')
+      const response = await fetch('https://tromora-v1.vercel.app/api/home-salons')
       
       if (!response.ok) {
         throw new Error('Failed to fetch salons')

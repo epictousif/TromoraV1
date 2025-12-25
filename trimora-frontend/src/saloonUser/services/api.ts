@@ -3,7 +3,7 @@ import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'a
 import type { AuthTokens } from '../types/auth';
 
 // API Base URL - adjust according to your backend
-const API_BASE_URL = 'https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1';
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({

@@ -1,0 +1,537 @@
+{
+    "info": {
+        "name": "Trimora User API - Production",
+        "description": "Complete Postman collection for User endpoints - Deployed on Vercel",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "trimora-backend"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "https://tromora-v1.vercel.app/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "accessToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "refreshToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "userId",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🔐 Authentication",
+            "item": [
+                {
+                    "name": "Check Email Exists",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/check-email",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "check-email"
+                            ]
+                        },
+                        "description": "Check if email is already registered in the system."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Register New User",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('userId', response.user.id);",
+                                    "    console.log('✅ User registered:', response.user.email);",
+                                    "    console.log('📍 User ID:', response.user.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"phoneNumber\": \"9876543210\",\n  \"dob\": \"1995-05-15\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "register"
+                            ]
+                        },
+                        "description": "Register a new user with email and password. Optional fields: phoneNumber, dob, referralCode"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                                    "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                                    "    pm.collectionVariables.set('userId', response.user.id);",
+                                    "    console.log('✅ Login successful');",
+                                    "    console.log('🔑 Access Token saved');",
+                                    "    console.log('🔄 Refresh Token saved');",
+                                    "    console.log('👤 User:', response.user.email);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "login"
+                            ]
+                        },
+                        "description": "Login with email and password. Returns accessToken (15min expiry) and refreshToken (7 days expiry)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Refresh Access Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                                    "    console.log('✅ Access token refreshed successfully');",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/refresh",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "refresh"
+                            ]
+                        },
+                        "description": "Get new access token using refresh token when access token expires"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current User (Me)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/user/me",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "me"
+                            ]
+                        },
+                        "description": "Get currently logged-in user's information"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.collectionVariables.set('accessToken', '');",
+                                    "    pm.collectionVariables.set('refreshToken', '');",
+                                    "    console.log('✅ Logged out successfully');",
+                                    "    console.log('🗑️ Tokens cleared');",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/user/logout",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "logout"
+                            ]
+                        },
+                        "description": "Logout user and invalidate all tokens"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Authentication and session management endpoints"
+        },
+        {
+            "name": "🔑 Password Reset (OTP)",
+            "item": [
+                {
+                    "name": "Forgot Password - Request OTP",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john.doe@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/forgot-password",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "forgot-password"
+                            ]
+                        },
+                        "description": "Request password reset OTP. User will receive 6-digit OTP via email. OTP expires in 10 minutes."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reset Password with OTP",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"otp\": \"123456\",\n  \"password\": \"newPassword123\",\n  \"confirmPassword\": \"newPassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/reset-password",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "reset-password"
+                            ]
+                        },
+                        "description": "Reset password using OTP received via email. Requires email + OTP + new password"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Password reset flow using OTP (One-Time Password)"
+        },
+        {
+            "name": "👥 User Management",
+            "item": [
+                {
+                    "name": "Get All Users (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/user",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user"
+                            ]
+                        },
+                        "description": "Get list of all users. Admin access required."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/user/{{userId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "{{userId}}"
+                            ]
+                        },
+                        "description": "Get user details by ID. Access: admin or the user themselves"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Updated Doe\",\n  \"phoneNumber\": \"9999888877\",\n  \"profilePicture\": \"https://example.com/profile.jpg\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/{{userId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "{{userId}}"
+                            ]
+                        },
+                        "description": "Update user information. Cannot update: password, email, refreshToken"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/user/{{userId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "{{userId}}"
+                            ]
+                        },
+                        "description": "Delete user account. Admin access required."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Add Role to User (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"role\": \"salonOwner\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/{{userId}}/roles",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "{{userId}}",
+                                "roles"
+                            ]
+                        },
+                        "description": "Add role to user. Available roles: user, salonOwner. Admin access required."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "User CRUD operations"
+        },
+        {
+            "name": "🎁 Referral System",
+            "item": [
+                {
+                    "name": "Get Referral Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{accessToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/user/referral-info",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "user",
+                                "referral-info"
+                            ]
+                        },
+                        "description": "Get user's referral code, reward points, and list of referred users"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Referral and rewards system"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{accessToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

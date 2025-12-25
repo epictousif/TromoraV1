@@ -92,7 +92,7 @@ export function AuthCard() {
         }
       }
       
-      const response = await fetch(`https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app${endpoint}`, {
+      const response = await fetch(`https://tromora-v1.vercel.app${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export function AuthCard() {
         navigate('/')
       } else {
         // After registration, automatically log in
-        const loginResponse = await fetch('https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/user/login', {
+        const loginResponse = await fetch('https://tromora-v1.vercel.app/api/v1/user/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

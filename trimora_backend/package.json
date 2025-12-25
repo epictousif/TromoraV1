@@ -7,10 +7,10 @@
     "setup-redis": "node scripts/setup-redis.js",
     "start": "nodemon server.js",
     "dev": "nodemon server.js",
-    "cache:status": "curl https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/status",
-    "cache:clear": "curl -X DELETE https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/clear",
-    "cache:warmup": "curl -X POST https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/warmup",
-    "cache:performance": "curl https://tromora-v1-b8fdk67zz-tousifhassana-8941s-projects.vercel.app/api/v1/cache/performance"
+    "cache:status": "curl https://tromora-v1.vercel.app/api/v1/cache/status",
+    "cache:clear": "curl -X DELETE https://tromora-v1.vercel.app/api/v1/cache/clear",
+    "cache:warmup": "curl -X POST https://tromora-v1.vercel.app/api/v1/cache/warmup",
+    "cache:performance": "curl https://tromora-v1.vercel.app/api/v1/cache/performance"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +34,7 @@
     "mongoose": "^8.16.3",
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
+    "nodemailer": "^7.0.12",
     "nodemon": "^3.1.10",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",

@@ -10,7 +10,7 @@ const REFRESH_TOKEN_PREFIX = 'user:refresh:';
 async function cacheUser(user) {
   try {
     await redisClient.set(USER_CACHE_PREFIX + user._id, JSON.stringify(user), { EX: 900 });
-  } catch (e) {}
+  } catch (e) { }
 }
 
 async function getCachedUser(id) {
@@ -26,7 +26,7 @@ async function getCachedUser(id) {
 exports.register = async (req, res) => {
   try {
     const { name, email, password, phoneNumber, dob, referralCode, role = 'user' } = req.body;
-    
+
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required' });
     }
@@ -44,13 +44,13 @@ exports.register = async (req, res) => {
         return res.status(200).json({
           status: 'success',
           message: 'Role added to existing account',
-          user: { 
-            id: user._id, 
-            name: user.name, 
-            email: user.email, 
-            phoneNumber: user.phoneNumber, 
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
             roles: user.roles,
-            referralCode: user.referralCode 
+            referralCode: user.referralCode
           },
         });
       }
@@ -96,24 +96,24 @@ exports.register = async (req, res) => {
     try {
       user.referralCode = await generateUniqueReferralCode(User, `${user._id}:${user.email}`);
       await user.save();
-    } catch (e) {}
+    } catch (e) { }
 
     // Award referrer if any
     if (referrer) {
-      try { await awardReferrer(referrer); } catch (e) {}
+      try { await awardReferrer(referrer); } catch (e) { }
     }
     await cacheUser(user);
     return res.status(201).json({
       status: 'success',
-      user: { 
-        id: user._id, 
-        name: user.name, 
-        email: user.email, 
-        phoneNumber: user.phoneNumber, 
-        dob: user.dob, 
-        roles: user.roles, 
-        referralCode: user.referralCode, 
-        referredBy: user.referredBy 
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        dob: user.dob,
+        roles: user.roles,
+        referralCode: user.referralCode,
+        referredBy: user.referredBy
       },
     });
   } catch (e) {
@@ -132,7 +132,7 @@ exports.login = async (req, res) => {
 
     const normalizedEmail = (email || '').trim().toLowerCase();
     console.log(`Login attempt for email: ${normalizedEmail}`);
-    
+
     // Find user with password
     const user = await User.findOne({ email: normalizedEmail }).select('+password');
     if (!user) {
@@ -148,11 +148,11 @@ exports.login = async (req, res) => {
     }
 
     // Generate tokens
-    const payload = { 
+    const payload = {
       id: user._id.toString(), // Ensure ID is a string
       roles: Array.isArray(user.roles) ? user.roles : ['user'] // Ensure roles is an array
     };
-    
+
     console.log('Generating tokens for user:', {
       userId: payload.id,
       roles: payload.roles
@@ -168,7 +168,7 @@ exports.login = async (req, res) => {
     // Store refresh token in Redis or fallback to database
     try {
       const redisKey = `${REFRESH_TOKEN_PREFIX}${user._id}`;
-      await redisClient.set(redisKey, refreshToken, { 
+      await redisClient.set(redisKey, refreshToken, {
         EX: 7 * 24 * 60 * 60 // 7 days
       });
       console.log(`Stored refresh token in Redis for user: ${user._id}`);
@@ -190,11 +190,11 @@ exports.login = async (req, res) => {
     };
 
     await cacheUser(user);
-    return res.json({ 
+    return res.json({
       status: 'success',
-      accessToken, 
-      refreshToken, 
-      user: userData 
+      accessToken,
+      refreshToken,
+      user: userData
     });
   } catch (e) {
     return res.status(500).json({ message: 'Internal server error' });
@@ -214,7 +214,7 @@ exports.refresh = async (req, res) => {
   try {
     const payload = jwt.verifyRefreshToken(refreshToken);
     let stored = null;
-    try { stored = await redisClient.get(REFRESH_TOKEN_PREFIX + payload.id); } catch {}
+    try { stored = await redisClient.get(REFRESH_TOKEN_PREFIX + payload.id); } catch { }
     if (!stored) {
       const user = await User.findById(payload.id).select('+refreshToken');
       if (!user || user.refreshToken !== refreshToken) return res.status(401).json({ message: 'Invalid refresh token' });
@@ -235,7 +235,7 @@ exports.checkEmail = async (req, res) => {
     if (!email) {
       return res.status(400).json({ message: 'Email is required' });
     }
-    
+
     const user = await User.findOne({ email: email.trim().toLowerCase() });
     return res.json({ exists: !!user });
   } catch (error) {
@@ -249,7 +249,7 @@ exports.addRole = async (req, res) => {
   try {
     const { role } = req.body;
     const { id } = req.params;
-    
+
     if (!role) {
       return res.status(400).json({ message: 'Role is required' });
     }
@@ -288,12 +288,12 @@ exports.me = async (req, res) => {
     if (user) await cacheUser(user);
   }
   if (!user) return res.status(404).json({ message: 'User not found' });
-  return res.json({ 
-    id: user._id, 
-    name: user.name, 
-    email: user.email, 
-    phoneNumber: user.phoneNumber, 
-    dob: user.dob, 
+  return res.json({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    dob: user.dob,
     role: user.role,
     referralCode: user.referralCode,
     rewardPoints: user.rewardPoints || 0,
@@ -308,7 +308,7 @@ exports.logout = async (req, res) => {
     try {
       await redisClient.del(USER_CACHE_PREFIX + userId);
       await redisClient.del(REFRESH_TOKEN_PREFIX + userId);
-    } catch (e) {}
+    } catch (e) { }
     await User.findByIdAndUpdate(userId, { refreshToken: null });
     return res.json({ message: 'Logout successful' });
   } catch (e) {
@@ -357,7 +357,7 @@ exports.update = async (req, res) => {
     }
     const user = await User.findByIdAndUpdate(id, updateData, { new: true });
     if (!user) return res.status(404).json({ message: 'User not found' });
-    try { await redisClient.del(USER_CACHE_PREFIX + id); } catch {}
+    try { await redisClient.del(USER_CACHE_PREFIX + id); } catch { }
     await cacheUser(user);
     return res.json({ status: 'success', user });
   } catch (e) {
@@ -372,7 +372,7 @@ exports.delete = async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
     const user = await User.findByIdAndDelete(id);
     if (!user) return res.status(404).json({ message: 'User not found' });
-    try { await redisClient.del(USER_CACHE_PREFIX + id); } catch {}
+    try { await redisClient.del(USER_CACHE_PREFIX + id); } catch { }
     return res.json({ status: 'success', message: 'User deleted' });
   } catch (e) {
     return res.status(500).json({ message: 'Failed to delete user', error: e.message });
@@ -384,12 +384,12 @@ exports.getReferralInfo = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
-    
+
     // Get users referred by this user
     const referredUsers = await User.find({ referredBy: user._id })
       .select('name email createdAt')
       .sort({ createdAt: -1 });
-    
+
     return res.json({
       status: 'success',
       referralInfo: {
@@ -405,5 +405,149 @@ exports.getReferralInfo = async (req, res) => {
     });
   } catch (e) {
     return res.status(500).json({ message: 'Failed to fetch referral info', error: e.message });
+  }
+};
+
+// Forgot Password - Send reset token via email
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email is required'
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Find user by email
+    const user = await User.findOne({ email: normalizedEmail }).select('+passwordResetOTP +passwordResetExpires');
+
+    if (!user) {
+      // Don't reveal if user exists for security
+      return res.status(200).json({
+        status: 'success',
+        message: 'If an account with that email exists, a password reset OTP has been sent.'
+      });
+    }
+
+    // Check if user signed up with Google
+    if (user.authMethod === 'google') {
+      return res.status(400).json({
+        status: 'error',
+        message: 'This account uses Google authentication. Please sign in with Google.'
+      });
+    }
+
+    // Generate reset OTP
+    const otp = user.createPasswordResetOTP();
+    await user.save({ validateBeforeSave: false });
+
+    // Send email
+    try {
+      const { sendPasswordResetEmail } = require('../utils/emailService');
+      await sendPasswordResetEmail(user, otp);
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Password reset OTP has been sent to your email.'
+      });
+    } catch (emailError) {
+      // If email fails, clear the token
+      user.passwordResetOTP = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      console.error('Error sending password reset email:', emailError);
+      return res.status(500).json({
+        status: 'error',
+        message: 'There was an error sending the email. Please try again later.'
+      });
+    }
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'An error occurred. Please try again later.'
+    });
+  }
+};
+
+// Reset Password - Verify OTP and update password
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, otp, password, confirmPassword } = req.body;
+
+    // Validation
+    if (!email || !otp) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email and OTP are required'
+      });
+    }
+
+    if (!password || !confirmPassword) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Password and confirm password are required'
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Passwords do not match'
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Password must be at least 8 characters long'
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Find user with valid OTP
+    const user = await User.findOne({
+      email: normalizedEmail,
+      passwordResetOTP: otp,
+      passwordResetExpires: { $gt: Date.now() }
+    }).select('+passwordResetOTP +passwordResetExpires');
+
+    if (!user) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid or expired OTP. Please request a new password reset.'
+      });
+    }
+
+    // Update password
+    user.password = password;
+    user.passwordResetOTP = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordChangedAt = Date.now();
+
+    await user.save();
+
+    // Clear user cache
+    try {
+      await redisClient.del(USER_CACHE_PREFIX + user._id);
+      await redisClient.del(REFRESH_TOKEN_PREFIX + user._id);
+    } catch (e) { }
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Password has been reset successfully. You can now log in with your new password.'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while resetting password. Please try again.'
+    });
   }
 };
